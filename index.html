@@ -8,855 +8,412 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- 字体：微软雅黑 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { 
-            font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif; 
-        }
+        * { font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', sans-serif; }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-12px); }
         }
         
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(134, 239, 172, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(134, 239, 172, 0.7); }
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes bounce-soft {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(-2deg); }
-            50% { transform: rotate(2deg); }
-        }
-        
-        .animate-float { animation: float 4s ease-in-out infinite; }
-        .animate-shimmer { 
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-        .animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
-        .animate-slide-up { animation: slideUp 0.6s ease-out; }
-        .animate-scale-in { animation: scaleIn 0.5s ease-out; }
-        .animate-bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
-        .animate-wiggle { animation: wiggle 3s ease-in-out infinite; }
-        
-        /* 马卡龙配色 */
-        .bg-macaron-gradient {
-            background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 50%, #fef3c7 100%);
-        }
-        
-        .bg-mint { background-color: #86efac; }
-        .bg-cream { background-color: #fef08a; }
-        .bg-sky-pastel { background-color: #93c5fd; }
-        .bg-pink-pastel { background-color: #fbcfe8; }
-        .bg-coral { background-color: #fb923c; }
-        
-        .text-mint { color: #22c55e; }
-        .text-coral { color: #f97316; }
-        .text-sky-pastel { color: #3b82f6; }
-        .text-pink-pastel { color: #ec4899; }
-        
-        .glass-macaron {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-        }
-        
-        .gradient-text-cute {
-            background: linear-gradient(135deg, #86efac 0%, #facc15 50%, #fb923c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .pattern-grid-cute {
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(134, 239, 172, 0.15) 2px, transparent 2px),
-                radial-gradient(circle at 75% 75%, rgba(253, 224, 71, 0.15) 2px, transparent 2px),
-                radial-gradient(circle at 50% 50%, rgba(251, 207, 232, 0.1) 1.5px, transparent 1.5px);
-            background-size: 30px 30px;
-        }
-        
-        .wrapping-paper {
-            background-size: 120px 120px;
-            transition: all 0.4s ease;
-        }
-        
-        .wrapping-paper::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.03) 100%);
-            pointer-events: none;
-        }
-        
-        .style-card {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .style-card:hover {
-            transform: translateY(-6px) scale(1.02);
-        }
-        
-        .style-card.selected {
-            ring: 4px;
-            ring-color: #86efac;
-            transform: scale(1.03);
-        }
-        
-        .upload-zone {
-            transition: all 0.4s ease;
-            background: linear-gradient(135deg, #f0fdf4 0%, #fefce8 50%, #fff7ed 100%);
-            border: 3px dashed #86efac;
-        }
-        
-        .upload-zone:hover {
-            background: linear-gradient(135deg, #dcfce7 0%, #fef9c3 50%, #ffedd5 100%);
-        }
-        
-        .upload-zone.dragover {
-            background: linear-gradient(135deg, #bbf7d0 0%, #fef08a 50%, #fed7aa 100%);
-            border-color: #fb923c;
-            transform: scale(1.02);
-        }
-        
-        .btn-cute {
-            background: linear-gradient(135deg, #86efac 0%, #fde047 100%);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 6px 0 #22c55e, 0 8px 20px rgba(34, 197, 94, 0.3);
-        }
-        
-        .btn-cute:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 #22c55e, 0 12px 30px rgba(34, 197, 94, 0.4);
-        }
-        
-        .btn-cute:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #22c55e, 0 4px 10px rgba(34, 197, 94, 0.3);
-        }
-        
-        .btn-coral {
-            background: linear-gradient(135deg, #fb923c 0%, #fbbf24 100%);
-            box-shadow: 0 6px 0 #ea580c, 0 8px 20px rgba(234, 88, 12, 0.3);
-        }
-        
-        .btn-coral:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 #ea580c, 0 12px 30px rgba(234, 88, 12, 0.4);
-        }
-        
-        .btn-coral:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #ea580c, 0 4px 10px rgba(234, 88, 12, 0.3);
-        }
-        
-        .loading-spinner {
-            border: 4px solid rgba(134, 239, 172, 0.2);
-            border-top-color: #22c55e;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        .gift-box {
-            transform-style: preserve-3d;
-            transition: transform 0.6s ease;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
-        .gift-box:hover {
-            transform: rotateY(12deg) rotateX(5deg);
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+        
+        .bg-macaron {
+            background: linear-gradient(135deg, #e0f7fa 0%, #f3e5f5 25%, #fff3e0 50%, #e8f5e9 75%, #e3f2fd 100%);
         }
         
-        .ribbon-cute {
-            background: linear-gradient(135deg, #fb923c 0%, #fbbf24 50%, #f59e0b 100%);
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
-        /* Custom scrollbar - cute style */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
+        .btn-primary {
+            background: linear-gradient(135deg, #f48fb1 0%, #ce93d8 100%);
+            box-shadow: 0 4px 15px rgba(244, 143, 177, 0.4);
+            transition: all 0.3s ease;
         }
         
-        ::-webkit-scrollbar-track {
-            background: #f0fdf4;
-            border-radius: 10px;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 143, 177, 0.5);
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #86efac 0%, #fde047 100%);
-            border-radius: 10px;
-            border: 2px solid #f0fdf4;
+        .upload-zone {
+            border: 3px dashed #86efac;
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #4ade80 0%, #facc15 100%);
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #f48fb1;
+            background: rgba(244, 143, 177, 0.1);
+            transform: scale(1.02);
         }
         
-        /* Decorative blobs */
-        .blob {
-            position: absolute;
+        .style-card {
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .style-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .style-card.selected {
+            border-color: #f48fb1;
+            box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.2);
+        }
+        
+        .loading-ring {
+            border: 4px solid rgba(244, 143, 177, 0.2);
+            border-top-color: #f48fb1;
             border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.5;
+            animation: spin 1s linear infinite;
         }
         
-        .blob-1 { background: #86efac; width: 300px; height: 300px; }
-        .blob-2 { background: #fde047; width: 250px; height: 250px; }
-        .blob-3 { background: #fbcfe8; width: 200px; height: 200px; }
-        .blob-4 { background: #93c5fd; width: 280px; height: 280px; }
+        .pattern-bg {
+            background-size: 100px 100px;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-macaron-gradient">
+<body class="min-h-screen bg-macaron">
     <div id="root"></div>
     
     <script type="text/babel">
-        const { useState, useRef, useEffect, useCallback } = React;
+        const { useState, useRef } = React;
         
-        // 模拟风格数据 - 马卡龙色系
+        // 风格配置
         const STYLES = [
-            {
-                id: 'cartoon',
-                name: '🎨 卡通可爱',
-                description: '圆润可爱，色彩明快',
-                gradient: 'from-pink-300 via-purple-300 to-indigo-300',
-                bgColor: 'bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100',
-                filter: 'saturate(1.2) contrast(1.1)',
-                emoji: '🌈'
+            { 
+                id: 'kawaii', 
+                name: '🐰 萌萌可爱', 
+                desc: '粉嫩圆润，超治愈',
+                prompt: 'cute kawaii cartoon style, pastel colors, soft lighting, chibi style, adorable, pink and purple tones, heart decorations, fluffy texture'
             },
-            {
-                id: 'watercolor',
-                name: '🖌️ 水彩艺术',
-                description: '柔和晕染，艺术感强',
-                gradient: 'from-cyan-300 via-sky-300 to-blue-300',
-                bgColor: 'bg-gradient-to-br from-cyan-100 via-sky-100 to-blue-100',
-                filter: 'saturate(0.9) contrast(0.95) brightness(1.05)',
-                emoji: '💧'
+            { 
+                id: 'pastel', 
+                name: '🧁 马卡龙', 
+                desc: '柔和梦幻，少女心',
+                prompt: 'pastel macaron color palette, soft dreamy atmosphere, watercolor texture, mint green, baby pink, lavender, light yellow, gentle gradients'
             },
-            {
-                id: 'sketch',
-                name: '✏️ 手绘素描',
-                description: '线条细腻，简约优雅',
-                gradient: 'from-amber-300 via-orange-300 to-yellow-300',
-                bgColor: 'bg-gradient-to-br from-amber-100 via-orange-100 to-yellow-100',
-                filter: 'grayscale(0.3) contrast(1.2)',
-                emoji: '📝'
+            { 
+                id: 'fresh', 
+                name: '🌿 清新自然', 
+                desc: '绿意盎然，很舒服',
+                prompt: 'fresh nature style, botanical elements, green leaves, flower patterns, mint and sage colors, organic shapes, natural lighting, eco-friendly vibe'
             },
-            {
-                id: 'popart',
-                name: '⭐ 波普艺术',
-                description: '大胆撞色，潮流前卫',
-                gradient: 'from-rose-300 via-pink-400 to-fuchsia-300',
-                bgColor: 'bg-gradient-to-br from-rose-100 via-pink-100 to-fuchsia-100',
-                filter: 'saturate(1.8) contrast(1.3)',
-                emoji: '🎭'
+            { 
+                id: 'ocean', 
+                name: '🐳 海洋泡泡', 
+                desc: '清凉透亮，夏日感',
+                prompt: 'ocean bubbles style, underwater theme, blue and cyan gradients, bubble patterns, wave textures, refreshing summer vibe, light blue tones'
+            },
+            { 
+                id: 'retro', 
+                name: '🌸 复古昭和', 
+                desc: '怀旧温柔，日系风',
+                prompt: 'retro Showa era style, Japanese vintage aesthetic, soft faded colors, nostalgic atmosphere, cherry blossoms, gentle sepia tones, film grain texture'
+            },
+            { 
+                id: 'galaxy', 
+                name: '✨ 星空梦幻', 
+                desc: '璀璨星河，神秘感',
+                prompt: 'galaxy cosmic style, starry night pattern, deep purple and blue, nebula clouds, glitter stars, space theme, magical atmosphere, sparkling effects'
             }
         ];
         
-        // 图标组件
-        const Icons = {
-            Upload: () => (
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-            ),
-            Image: () => (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            ),
-            Download: () => (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-            ),
-            Sparkles: () => (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-                </svg>
-            ),
-            Gift: () => (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                </svg>
-            ),
-            Check: () => (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-            ),
-            Refresh: () => (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-            ),
-            ArrowRight: () => (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-            ),
-            Heart: () => (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-            ),
-            Star: () => (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-            )
+        // 包装纸生成函数 - 使用 Pollinations.ai
+        const generateWrappingPaper = async (imageBase64, stylePrompt) => {
+            // 构建 prompt
+            const prompt = `seamless repeating pattern, gift wrapping paper design, ${stylePrompt}, high quality, tileable pattern, decorative, festive`;
+            
+            // Pollinations.ai URL
+            const encodedPrompt = encodeURIComponent(prompt);
+            const seed = Math.floor(Math.random() * 10000);
+            const width = 1024;
+            const height = 1024;
+            
+            const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true`;
+            
+            return url;
         };
         
-        // 包装纸预览组件
-        const WrappingPaperPreview = ({ imageUrl, style, isGenerating }) => {
-            const canvasRef = useRef(null);
-            const [patternUrl, setPatternUrl] = useState('');
-            
-            useEffect(() => {
-                if (!imageUrl || !canvasRef.current) return;
-                
-                const canvas = canvasRef.current;
-                const ctx = canvas.getContext('2d');
-                const size = 200;
-                canvas.width = size;
-                canvas.height = size;
-                
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.onload = () => {
-                    ctx.fillStyle = style.id === 'watercolor' ? '#f0f9ff' : 
-                                   style.id === 'cartoon' ? '#fdf2f8' :
-                                   style.id === 'sketch' ? '#fffbeb' : '#f0fdfa';
-                    ctx.fillRect(0, 0, size, size);
-                    
-                    const imgSize = 80;
-                    const offset = 10;
-                    
-                    ctx.save();
-                    ctx.filter = style.filter;
-                    
-                    ctx.drawImage(img, offset, offset, imgSize, imgSize);
-                    ctx.drawImage(img, size/2 + offset/2, offset, imgSize, imgSize);
-                    ctx.drawImage(img, offset, size/2 + offset/2, imgSize, imgSize);
-                    ctx.drawImage(img, size/2 + offset/2, size/2 + offset/2, imgSize, imgSize);
-                    
-                    ctx.restore();
-                    
-                    // 添加可爱装饰元素
-                    ctx.globalAlpha = 0.15;
-                    for (let i = 0; i < 10; i++) {
-                        ctx.beginPath();
-                        const isCircle = Math.random() > 0.5;
-                        const x = Math.random() * size;
-                        const y = Math.random() * size;
-                        const r = Math.random() * 15 + 5;
-                        
-                        if (isCircle) {
-                            ctx.arc(x, y, r, 0, Math.PI * 2);
-                            ctx.fillStyle = ['#86efac', '#fde047', '#fbcfe8', '#93c5fd'][Math.floor(Math.random() * 4)];
-                        } else {
-                            // 画小星星
-                            drawStar(ctx, x, y, 5, r, r/2);
-                            ctx.fillStyle = '#fbbf24';
-                        }
-                        ctx.fill();
-                    }
-                    
-                    setPatternUrl(canvas.toDataURL());
-                };
-                img.src = imageUrl;
-            }, [imageUrl, style]);
-            
-            const drawStar = (ctx, cx, cy, spikes, outerRadius, innerRadius) => {
-                let rot = Math.PI / 2 * 3;
-                let x = cx;
-                let y = cy;
-                let step = Math.PI / spikes;
-
-                ctx.beginPath();
-                ctx.moveTo(cx, cy - outerRadius);
-                for (let i = 0; i < spikes; i++) {
-                    x = cx + Math.cos(rot) * outerRadius;
-                    y = cy + Math.sin(rot) * outerRadius;
-                    ctx.lineTo(x, y);
-                    rot += step;
-
-                    x = cx + Math.cos(rot) * innerRadius;
-                    y = cy + Math.sin(rot) * innerRadius;
-                    ctx.lineTo(x, y);
-                    rot += step;
-                }
-                ctx.lineTo(cx, cy - outerRadius);
-                ctx.closePath();
-            };
-            
-            if (isGenerating) {
-                return (
-                    <div className="relative w-full aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-green-50 to-yellow-50 flex items-center justify-center shadow-soft">
-                        <div className="absolute inset-0 pattern-grid-cute"></div>
-                        <div className="relative z-10 text-center">
-                            <div className="loading-spinner w-20 h-20 mx-auto mb-6"></div>
-                            <p className="text-green-600 font-bold text-lg">🎨 AI 正在创作中...</p>
-                            <p className="text-sm text-green-400 mt-2">预计需要 3-5 秒</p>
-                        </div>
-                    </div>
-                );
-            }
-            
-            if (!patternUrl) {
-                return (
-                    <div className="relative w-full aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-green-50 to-yellow-50 flex items-center justify-center border-4 border-dashed border-green-200">
-                        <div className="text-center text-green-300">
-                            <div className="text-6xl mb-3">🎁</div>
-                            <p className="font-medium">预览区域</p>
-                        </div>
-                    </div>
-                );
-            }
-            
-            return (
-                <div className="relative group">
-                    <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl gift-box border-4 border-white">
-                        <div 
-                            className="absolute inset-0 wrapping-paper"
-                            style={{
-                                backgroundImage: `url(${patternUrl})`,
-                                backgroundSize: '40% 40%'
-                            }}
-                        ></div>
-                        
-                        <div className="absolute inset-0 pointer-events-none">
-                            <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/25 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/5 to-transparent"></div>
-                        </div>
-                        
-                        <div className="absolute inset-0 pointer-events-none">
-                            <div className="absolute top-0 bottom-0 left-1/2 w-10 -translate-x-1/2 ribbon-cute shadow-lg"></div>
-                            <div className="absolute left-0 right-0 top-1/2 h-10 -translate-y-1/2 ribbon-cute shadow-lg"></div>
-                            
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                <div className="relative animate-bounce-soft">
-                                    <div className="absolute -left-7 -top-4 w-10 h-8 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full transform -rotate-12 shadow-md"></div>
-                                    <div className="absolute -right-7 -top-4 w-10 h-8 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full transform rotate-12 shadow-md"></div>
-                                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full shadow-md"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="mt-6 p-5 rounded-3xl bg-gradient-to-br from-green-50 to-yellow-50 border-2 border-green-100">
-                        <p className="text-sm text-green-600 mb-3 font-bold flex items-center gap-2">
-                            <span>🎀</span> 包装纸图案
-                        </p>
-                        <div 
-                            className="w-full h-28 rounded-2xl border-3 border-white shadow-inner"
-                            style={{
-                                backgroundImage: `url(${patternUrl})`,
-                                backgroundSize: '80px 80px'
-                            }}
-                        ></div>
-                    </div>
-                    
-                    <canvas ref={canvasRef} className="hidden"></canvas>
-                </div>
-            );
-        };
-        
-        // 步骤指示器 - 可爱风格
-        const StepIndicator = ({ currentStep, steps }) => (
-            <div className="flex items-center justify-center gap-2 mb-10 flex-wrap">
-                {steps.map((step, index) => (
-                    <React.Fragment key={step.id}>
-                        <div className={`
-                            flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-300
-                            ${currentStep >= index + 1 
-                                ? 'bg-gradient-to-r from-green-300 to-yellow-300 text-green-800 shadow-lg shadow-green-100' 
-                                : 'bg-white/60 text-gray-400 border-2 border-green-100'}
-                        `}>
-                            <div className={`
-                                w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                                ${currentStep >= index + 1 ? 'bg-white/50' : 'bg-gray-100'}
-                            `}>
-                                {currentStep > index + 1 ? '✅' : step.emoji}
-                            </div>
-                            <span className="text-sm font-bold hidden sm:block">{step.name}</span>
-                        </div>
-                        {index < steps.length - 1 && (
-                            <div className={`
-                                w-6 h-1 rounded-full transition-all duration-300
-                                ${currentStep > index + 1 ? 'bg-gradient-to-r from-green-300 to-yellow-300' : 'bg-green-100'}
-                            `}></div>
-                        )}
-                    </React.Fragment>
-                ))}
-            </div>
-        );
-        
-        // 主应用组件
-        const App = () => {
-            const [currentStep, setCurrentStep] = useState(1);
-            const [uploadedImage, setUploadedImage] = useState(null);
+        function App() {
+            const [step, setStep] = useState(1);
+            const [image, setImage] = useState(null);
             const [selectedStyle, setSelectedStyle] = useState(STYLES[0]);
-            const [isGenerating, setIsGenerating] = useState(false);
-            const [isComplete, setIsComplete] = useState(false);
+            const [loading, setLoading] = useState(false);
+            const [generatedUrl, setGeneratedUrl] = useState(null);
+            const [error, setError] = useState(null);
+            const fileRef = useRef(null);
             const [dragOver, setDragOver] = useState(false);
-            const fileInputRef = useRef(null);
             
-            const steps = [
-                { id: 'upload', name: '上传照片', emoji: '📸' },
-                { id: 'style', name: '选择风格', emoji: '🎨' },
-                { id: 'preview', name: '生成预览', emoji: '✨' },
-                { id: 'download', name: '下载图案', emoji: '🎁' }
-            ];
-            
-            const handleFileSelect = (file) => {
+            // 处理文件上传
+            const handleFile = (file) => {
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        setUploadedImage(e.target.result);
-                        setCurrentStep(2);
+                        setImage(e.target.result);
+                        setStep(2);
+                        setError(null);
                     };
                     reader.readAsDataURL(file);
                 }
             };
             
-            const handleDrop = (e) => {
-                e.preventDefault();
-                setDragOver(false);
-                const file = e.dataTransfer.files[0];
-                handleFileSelect(file);
-            };
-            
-            const handleDragOver = (e) => {
-                e.preventDefault();
-                setDragOver(true);
-            };
-            
-            const handleDragLeave = () => {
-                setDragOver(false);
-            };
-            
-            const handleGenerate = () => {
-                setIsGenerating(true);
-                setCurrentStep(3);
+            // 生成包装纸
+            const handleGenerate = async () => {
+                if (!image || !selectedStyle) return;
                 
-                setTimeout(() => {
-                    setIsGenerating(false);
-                    setIsComplete(true);
-                    setCurrentStep(4);
-                }, 3000);
-            };
-            
-            const handleDownload = () => {
-                const link = document.createElement('a');
-                link.download = `wrap-studio-${selectedStyle.id}-${Date.now()}.png`;
-                link.href = uploadedImage;
-                link.click();
+                setLoading(true);
+                setError(null);
+                setStep(3);
                 
-                alert('🎉 包装纸图案已下载！');
+                try {
+                    // 使用 Pollinations.ai 生成
+                    const url = await generateWrappingPaper(image, selectedStyle.prompt);
+                    setGeneratedUrl(url);
+                    setStep(4);
+                } catch (err) {
+                    console.error('生成失败:', err);
+                    setError('生成失败了，请重试 😢');
+                    setStep(2);
+                } finally {
+                    setLoading(false);
+                }
             };
             
+            // 下载图片
+            const handleDownload = async () => {
+                if (!generatedUrl) return;
+                
+                try {
+                    const response = await fetch(generatedUrl);
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `wrap-studio-${selectedStyle.id}-${Date.now()}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                } catch (err) {
+                    // 如果下载失败，直接打开图片
+                    window.open(generatedUrl, '_blank');
+                }
+            };
+            
+            // 重新开始
             const handleReset = () => {
-                setUploadedImage(null);
+                setStep(1);
+                setImage(null);
+                setGeneratedUrl(null);
+                setError(null);
                 setSelectedStyle(STYLES[0]);
-                setIsGenerating(false);
-                setIsComplete(false);
-                setCurrentStep(1);
             };
             
             return (
-                <div className="min-h-screen bg-macaron-gradient">
-                    {/* 背景装饰 - 可爱风格 */}
+                <div className="min-h-screen p-4 md:p-8">
+                    {/* 装饰背景 */}
                     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                        <div className="blob blob-1 top-10 left-10 animate-float"></div>
-                        <div className="blob blob-2 bottom-20 right-10 animate-float" style={{animationDelay: '1s'}}></div>
-                        <div className="blob blob-3 top-1/3 right-1/4 animate-float" style={{animationDelay: '2s'}}></div>
-                        <div className="blob blob-4 bottom-1/3 left-1/4 animate-float" style={{animationDelay: '1.5s'}}></div>
+                        <div className="absolute w-32 h-32 bg-pink-300 rounded-full opacity-40 blur-3xl top-10 left-10 animate-float"></div>
+                        <div className="absolute w-24 h-24 bg-blue-300 rounded-full opacity-40 blur-3xl top-40 right-20 animate-float" style={{animationDelay: '1s'}}></div>
+                        <div className="absolute w-20 h-20 bg-green-300 rounded-full opacity-40 blur-3xl bottom-40 left-20 animate-float" style={{animationDelay: '2s'}}></div>
                     </div>
                     
-                    {/* 头部 */}
-                    <header className="relative z-10">
-                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-300 to-yellow-300 flex items-center justify-center text-green-700 shadow-xl animate-wiggle">
-                                        <span className="text-3xl">🎁</span>
-                                    </div>
-                                    <div>
-                                        <h1 className="text-2xl font-extrabold gradient-text-cute">Wrap Studio</h1>
-                                        <p className="text-sm text-green-600 font-medium">🎨 人像转礼品包装纸</p>
-                                    </div>
-                                </div>
-                                <button 
-                                    onClick={handleReset}
-                                    className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-green-600 hover:text-green-700 bg-white/60 hover:bg-white/80 rounded-full transition-all border-2 border-green-200"
-                                >
-                                    <span>🔄</span>
-                                    <span className="hidden sm:inline">重新开始</span>
-                                </button>
-                            </div>
-                        </div>
-                    </header>
-                    
-                    {/* 主要内容 */}
-                    <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-                        {/* 标题区 */}
-                        <div className="text-center mb-12 animate-slide-up">
-                            <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-5">
-                                将照片变成
-                                <span className="gradient-text-cute"> 独一无二的</span>
-                                <br />礼品包装纸 🎀
-                            </h2>
-                            <p className="text-lg text-gray-600 max-w-2xl mx-auto font-medium">
-                                上传人像照片，选择喜欢的艺术风格，AI 将为您生成精美的礼品包装纸图案 ✨
-                            </p>
-                        </div>
+                    <div className="max-w-4xl mx-auto relative z-10">
+                        {/* 标题 */}
+                        <header className="text-center mb-10">
+                            <div className="text-6xl mb-4 animate-float">🎁</div>
+                            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+                                Wrap Studio
+                            </h1>
+                            <p className="text-gray-600 text-lg">✨ 免费 AI 礼品包装纸生成器</p>
+                        </header>
                         
                         {/* 步骤指示器 */}
-                        <StepIndicator currentStep={currentStep} steps={steps} />
-                        
-                        {/* 工作区 */}
-                        <div className="grid lg:grid-cols-2 gap-10">
-                            {/* 左侧：操作区 */}
-                            <div className="space-y-6 animate-slide-up" style={{animationDelay: '0.1s'}}>
-                                {/* 上传区域 */}
-                                <div className={`
-                                    relative rounded-3xl overflow-hidden transition-all duration-300
-                                    ${uploadedImage ? 'bg-white border-4 border-green-200' : ''}
-                                    ${dragOver ? 'scale-[1.02]' : ''}
-                                `}>
-                                    {!uploadedImage ? (
-                                        <div
-                                            className="upload-zone p-10 sm:p-14 text-center cursor-pointer rounded-3xl"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            onDrop={handleDrop}
-                                            onDragOver={handleDragOver}
-                                            onDragLeave={handleDragLeave}
-                                        >
-                                            <input
-                                                ref={fileInputRef}
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                onChange={(e) => handleFileSelect(e.target.files[0])}
-                                            />
-                                            <div className="w-24 h-24 mx-auto mb-5 rounded-3xl bg-gradient-to-br from-green-100 to-yellow-100 flex items-center justify-center text-green-500 animate-bounce-soft">
-                                                <Icons.Upload />
-                                            </div>
-                                            <h3 className="text-xl font-bold text-gray-800 mb-3">
-                                                📸 点击或拖拽上传照片
-                                            </h3>
-                                            <p className="text-sm text-gray-500 mb-5 font-medium">
-                                                支持 JPG、PNG 格式，建议 500x500 像素以上
-                                            </p>
-                                            <div className="flex items-center justify-center gap-4 text-sm text-green-600 font-medium">
-                                                <span className="flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-full">
-                                                    ✨ 自动抠图
-                                                </span>
-                                                <span className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-full">
-                                                    🔒 隐私保护
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="relative p-5">
-                                            <img
-                                                src={uploadedImage}
-                                                alt="Uploaded"
-                                                className="w-full max-h-64 object-contain rounded-2xl"
-                                            />
-                                            <button
-                                                onClick={() => setUploadedImage(null)}
-                                                className="absolute top-7 right-7 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-2xl text-gray-400 hover:text-red-400 shadow-lg transition-all hover:scale-110"
-                                            >
-                                                ×
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {/* 风格选择 */}
-                                {uploadedImage && (
-                                    <div className="bg-white/80 backdrop-blur rounded-3xl p-7 shadow-soft border-4 border-green-100 animate-scale-in">
-                                        <h3 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-3">
-                                            <span className="text-2xl">✨</span>
-                                            选择风格
-                                        </h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {STYLES.map((style) => (
-                                                <button
-                                                    key={style.id}
-                                                    onClick={() => setSelectedStyle(style)}
-                                                    className={`
-                                                        style-card relative p-5 rounded-2xl border-3 text-left transition-all
-                                                        ${selectedStyle.id === style.id 
-                                                            ? 'border-green-300 bg-gradient-to-br from-green-50 to-yellow-50 shadow-lg' 
-                                                            : 'border-gray-100 hover:border-green-200 hover:bg-green-50/50'}
-                                                    `}
-                                                >
-                                                    <div className="flex items-center gap-2 mb-3">
-                                                        <span className="text-2xl">{style.emoji}</span>
-                                                        <div className={`
-                                                            w-full h-14 rounded-xl bg-gradient-to-br ${style.gradient}
-                                                        `}></div>
-                                                    </div>
-                                                    <p className="font-bold text-gray-800">{style.name}</p>
-                                                    <p className="text-xs text-gray-500 mt-1">{style.description}</p>
-                                                    {selectedStyle.id === style.id && (
-                                                        <div className="absolute top-3 right-3 w-7 h-7 bg-green-400 rounded-full flex items-center justify-center text-white shadow-md">
-                                                            <Icons.Check />
-                                                        </div>
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
-                                        
-                                        {/* 生成按钮 */}
-                                        <button
-                                            onClick={handleGenerate}
-                                            disabled={isGenerating}
-                                            className="
-                                                btn-cute w-full mt-8 py-5 rounded-2xl text-green-800 font-extrabold text-lg
-                                                flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none
-                                            "
-                                        >
-                                            {isGenerating ? (
-                                                <>
-                                                    <div className="loading-spinner w-6 h-6"></div>
-                                                    <span>生成中...</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span className="text-2xl">✨</span>
-                                                    <span>生成包装纸</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                            
-                            {/* 右侧：预览区 */}
-                            <div className="animate-slide-up" style={{animationDelay: '0.2s'}}>
-                                <div className="bg-white/80 backdrop-blur rounded-3xl p-7 shadow-soft border-4 border-green-100">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-xl font-bold text-gray-800 flex items-center gap-3">
-                                            <span className="text-2xl">🖼️</span>
-                                            效果预览
-                                        </h3>
-                                        {isComplete && (
-                                            <span className="px-4 py-1.5 bg-green-100 text-green-700 text-sm font-bold rounded-full flex items-center gap-1">
-                                                <span>✅</span> 生成完成
-                                            </span>
-                                        )}
-                                    </div>
-                                    
-                                    <WrappingPaperPreview
-                                        imageUrl={uploadedImage}
-                                        style={selectedStyle}
-                                        isGenerating={isGenerating}
-                                    />
-                                    
-                                    {/* 下载按钮 */}
-                                    {isComplete && (
-                                        <div className="mt-8 animate-scale-in">
-                                            <button
-                                                onClick={handleDownload}
-                                                className="
-                                                    btn-coral w-full py-5 rounded-2xl font-extrabold text-lg text-white
-                                                    flex items-center justify-center gap-3 transition-all
-                                                "
-                                            >
-                                                <span className="text-2xl">📥</span>
-                                                <span>下载包装纸图案</span>
-                                            </button>
-                                            <p className="text-center text-sm text-gray-400 mt-4 font-medium">
-                                                高清 PNG 格式，可直接用于打印 🖨️
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {/* 小贴士 */}
-                                <div className="mt-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-3xl border-4 border-yellow-200">
-                                    <p className="text-sm text-orange-700 flex items-start gap-3 font-medium">
-                                        <span className="text-2xl">💡</span>
-                                        <span>
-                                            <strong className="text-orange-800">小贴士：</strong>
-                                            选择正面清晰的人像照片效果最佳。生成的图案可以无限平铺，适合各种尺寸的礼品包装哦！
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        {/* 底部展示 */}
-                        <div className="mt-20 pt-16 border-t-4 border-green-100">
-                            <h3 className="text-3xl font-extrabold text-center text-gray-800 mb-10 flex items-center justify-center gap-3">
-                                <span>🎀</span> 应用场景 <span>🎀</span>
-                            </h3>
-                            <div className="grid sm:grid-cols-3 gap-6">
+                        <div className="flex justify-center mb-10">
+                            <div className="flex items-center gap-2 bg-white/70 px-6 py-3 rounded-full shadow-lg">
                                 {[
-                                    { icon: '🎂', title: '生日礼物', desc: '为特别的人准备独一无二的礼物包装' },
-                                    { icon: '🎄', title: '节日礼盒', desc: '圣诞、情人节、母亲节的专属包装' },
-                                    { icon: '🎨', title: '创意手工', desc: '用于手账、贺卡、相册等 DIY 项目' }
-                                ].map((item, i) => (
-                                    <div key={i} className="text-center p-8 rounded-3xl bg-white/60 backdrop-blur border-4 border-green-100 hover:border-green-200 transition-all hover:scale-105">
-                                        <div className="text-5xl mb-4 animate-bounce-soft" style={{animationDelay: `${i * 0.2}s`}}>{item.icon}</div>
-                                        <h4 className="font-bold text-gray-800 mb-3 text-lg">{item.title}</h4>
-                                        <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
-                                    </div>
+                                    { num: 1, label: '上传', icon: '📸' },
+                                    { num: 2, label: '风格', icon: '🎨' },
+                                    { num: 3, label: '生成', icon: '✨' },
+                                    { num: 4, label: '下载', icon: '💾' }
+                                ].map((s, i) => (
+                                    <React.Fragment key={s.num}>
+                                        <div className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all ${
+                                            step >= s.num ? 'bg-gradient-to-r from-pink-300 to-purple-300 text-white' : 'bg-gray-100 text-gray-400'
+                                        }`}>
+                                            <span>{s.icon}</span>
+                                            <span className="hidden sm:inline text-sm font-bold">{s.label}</span>
+                                        </div>
+                                        {i < 3 && <div className="w-4 h-1 bg-gray-200 rounded"></div>}
+                                    </React.Fragment>
                                 ))}
                             </div>
                         </div>
-                    </main>
-                    
-                    {/* 页脚 */}
-                    <footer className="relative z-10 border-t-4 border-green-100 mt-20">
-                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <p className="text-sm text-gray-500 font-medium">
-                                    © 2024 Wrap Studio. 用 AI 创造独特的心意 🎁
-                                </p>
-                                <div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
-                                    <span>Made with</span>
-                                    <span className="text-red-400 animate-bounce-soft">❤️</span>
-                                    <span>for you</span>
+                        
+                        {/* 步骤 1: 上传 */}
+                        {step === 1 && (
+                            <div className="glass rounded-3xl p-8 text-center">
+                                <div 
+                                    className={`upload-zone rounded-3xl p-12 cursor-pointer ${dragOver ? 'dragover' : ''}`}
+                                    onClick={() => fileRef.current?.click()}
+                                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                                    onDragLeave={() => setDragOver(false)}
+                                    onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]); }}
+                                >
+                                    <div className="text-6xl mb-4">📸</div>
+                                    <p className="text-xl text-gray-700 mb-2 font-bold">点击或拖拽上传照片</p>
+                                    <p className="text-gray-400 text-sm">支持 JPG、PNG 格式</p>
+                                    <input 
+                                        type="file" 
+                                        ref={fileRef} 
+                                        className="hidden" 
+                                        accept="image/*"
+                                        onChange={(e) => handleFile(e.target.files[0])}
+                                    />
+                                </div>
+                                
+                                <div className="flex justify-center gap-4 mt-6">
+                                    <span className="bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm">✨ 免费生成</span>
+                                    <span className="bg-purple-100 text-purple-600 px-4 py-2 rounded-full text-sm">🔒 隐私保护</span>
                                 </div>
                             </div>
+                        )}
+                        
+                        {/* 步骤 2: 选择风格 */}
+                        {step === 2 && (
+                            <div className="glass rounded-3xl p-8">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <button onClick={handleReset} className="text-gray-400 hover:text-gray-600">← 返回</button>
+                                    <h2 className="text-2xl font-bold text-gray-800">选择喜欢的风格</h2>
+                                </div>
+                                
+                                {/* 预览原图 */}
+                                <div className="mb-6 flex justify-center">
+                                    <img src={image} className="w-32 h-32 object-cover rounded-2xl shadow-lg" alt="上传的照片" />
+                                </div>
+                                
+                                {/* 风格选择 */}
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                                    {STYLES.map(style => (
+                                        <div 
+                                            key={style.id}
+                                            className={`style-card bg-white rounded-2xl p-5 cursor-pointer text-center ${selectedStyle.id === style.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedStyle(style)}
+                                        >
+                                            <div className="text-4xl mb-2">{style.name.split(' ')[0]}</div>
+                                            <div className="font-bold text-gray-800">{style.name.split(' ')[1]}</div>
+                                            <div className="text-sm text-gray-500 mt-1">{style.desc}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                {error && (
+                                    <div className="bg-red-100 text-red-600 p-4 rounded-2xl mb-6 text-center">
+                                        {error}
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    onClick={handleGenerate} 
+                                    className="btn-primary w-full py-4 rounded-full text-white font-bold text-lg"
+                                >
+                                    ✨ 开始免费生成
+                                </button>
+                            </div>
+                        )}
+                        
+                        {/* 步骤 3: 生成中 */}
+                        {step === 3 && loading && (
+                            <div className="glass rounded-3xl p-12 text-center">
+                                <div className="loading-ring w-20 h-20 mx-auto mb-6"></div>
+                                <p className="text-2xl font-bold text-gray-800 mb-2">AI 正在创作中...</p>
+                                <p className="text-gray-500">使用 Pollinations.ai 免费生成</p>
+                                <p className="text-sm text-gray-400 mt-4">首次生成可能需要 10-30 秒</p>
+                            </div>
+                        )}
+                        
+                        {/* 步骤 4: 结果 */}
+                        {step === 4 && generatedUrl && (
+                            <div className="glass rounded-3xl p-8">
+                                <div className="text-center mb-6">
+                                    <div className="text-5xl mb-3">🎉</div>
+                                    <h2 className="text-2xl font-bold text-gray-800">完成啦！</h2>
+                                </div>
+                                
+                                {/* 生成的图案 */}
+                                <div className="mb-6">
+                                    <p className="text-gray-600 mb-3 text-center">包装纸图案（可平铺）：</p>
+                                    <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+                                        <img 
+                                            src={generatedUrl} 
+                                            alt="生成的包装纸" 
+                                            className="w-full h-auto"
+                                            style={{imageRendering: 'crisp-edges'}}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                {/* 预览效果 */}
+                                <div className="mb-6 bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl p-6 text-center">
+                                    <p className="text-gray-600 mb-3">礼盒预览效果：</p>
+                                    <div className="inline-block relative">
+                                        <div className="w-40 h-40 rounded-2xl shadow-xl pattern-bg" style={{
+                                            backgroundImage: `url(${generatedUrl})`,
+                                            backgroundSize: '80px 80px'
+                                        }}></div>
+                                        <div className="absolute top-0 bottom-0 left-1/2 w-4 -translate-x-1/2 bg-gradient-to-b from-yellow-300 to-orange-400"></div>
+                                        <div className="absolute left-0 right-0 top-1/2 h-4 -translate-y-1/2 bg-gradient-to-r from-yellow-300 to-orange-400"></div>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-red-400 rounded-full shadow-lg"></div>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex gap-4">
+                                    <button 
+                                        onClick={handleDownload}
+                                        className="btn-primary flex-1 py-4 rounded-full text-white font-bold"
+                                    >
+                                        💾 下载高清图
+                                    </button>
+                                    <button 
+                                        onClick={handleReset}
+                                        className="bg-gray-100 text-gray-600 px-6 py-4 rounded-full font-bold hover:bg-gray-200 transition"
+                                    >
+                                        🔄 再来一张
+                                    </button>
+                                </div>
+                                
+                                <p className="text-center text-sm text-gray-400 mt-4">
+                                    图片由 Pollinations.ai 免费生成
+                                </p>
+                            </div>
+                        )}
+                        
+                        {/* 说明 */}
+                        <div className="mt-10 text-center text-gray-500 text-sm">
+                            <p>🎨 使用 Pollinations.ai 免费 API 生成图片</p>
+                            <p className="mt-2">支持商业使用 · 无需注册 · 无限生成</p>
                         </div>
-                    </footer>
+                    </div>
                 </div>
             );
-        };
+        }
         
-        // 渲染应用
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
