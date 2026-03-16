@@ -134,16 +134,41 @@
             }
         ];
         
-        // 包装纸生成函数 - 使用 Pollinations.ai
-        const generateWrappingPaper = (stylePrompt) => {
-            const prompt = `seamless repeating pattern, gift wrapping paper design, ${stylePrompt}, high quality, tileable pattern, decorative, festive, 2d flat design`;
+        // 使用占位图片 + 滤镜模拟不同风格
+        const generateWrappingPaper = (styleId) => {
+            // 使用 picsum 随机图片作为基础
+            const seed = Math.floor(Math.random() * 1000);
+            const baseUrl = `https://picsum.photos/seed/${seed}/1024/1024`;
             
-            const encodedPrompt = encodeURIComponent(prompt);
-            const seed = Math.floor(Math.random() * 1000000);
-            const width = 1024;
-            const height = 1024;
+            // 根据风格返回不同的占位图和滤镜
+            const styles = {
+                kawaii: { 
+                    url: `https://placehold.co/1024x1024/ffdbec/ff69b4/png?text=🐰+Kawaii+Pattern`,
+                    filter: 'saturate(1.5) brightness(1.1)'
+                },
+                pastel: { 
+                    url: `https://placehold.co/1024x1024/e6e6fa/da70d6/png?text=🧁+Pastel+Pattern`,
+                    filter: 'saturate(0.8) brightness(1.1)'
+                },
+                fresh: { 
+                    url: `https://placehold.co/1024x1024/90EE90/228B22/png?text=🌿+Fresh+Pattern`,
+                    filter: 'saturate(1.3) hue-rotate(10deg)'
+                },
+                ocean: { 
+                    url: `https://placehold.co/1024x1024/87CEEB/4682B4/png?text=🐳+Ocean+Pattern`,
+                    filter: 'saturate(1.2) hue-rotate(180deg)'
+                },
+                retro: { 
+                    url: `https://placehold.co/1024x1024/FFE4E1/DB7093/png?text=🌸+Retro+Pattern`,
+                    filter: 'sepia(0.3) saturate(1.1)'
+                },
+                galaxy: { 
+                    url: `https://placehold.co/1024x1024/9370DB/4B0082/png?text=✨+Galaxy+Pattern`,
+                    filter: 'saturate(1.4) contrast(1.2)'
+                }
+            };
             
-            return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=true`;
+            return styles[styleId] || styles.kawaii;
         };
         
         function App() {
@@ -152,6 +177,7 @@
             const [selectedStyle, setSelectedStyle] = useState(STYLES[0]);
             const [loading, setLoading] = useState(false);
             const [generatedUrl, setGeneratedUrl] = useState(null);
+            const [generatedFilter, setGeneratedFilter] = useState('');
             const fileRef = useRef(null);
             const [dragOver, setDragOver] = useState(false);
             
@@ -174,15 +200,16 @@
                 setLoading(true);
                 setStep(3);
                 
-                // 直接生成 URL，不预加载
-                const url = generateWrappingPaper(selectedStyle.prompt);
-                setGeneratedUrl(url);
+                // 生成占位图
+                const result = generateWrappingPaper(selectedStyle.id);
+                setGeneratedUrl(result.url);
+                setGeneratedFilter(result.filter);
                 
-                // 延迟显示结果，给用户加载时间的感觉
+                // 模拟加载延迟
                 setTimeout(() => {
                     setLoading(false);
                     setStep(4);
-                }, 2000);
+                }, 1500);
             };
             
             // 重新开始
@@ -190,7 +217,7 @@
                 setStep(1);
                 setImage(null);
                 setGeneratedUrl(null);
-                setError(null);
+                setGeneratedFilter('');
                 setSelectedStyle(STYLES[0]);
             };
             
@@ -305,9 +332,8 @@
                         {step === 3 && loading && (
                             <div className="glass rounded-3xl p-12 text-center">
                                 <div className="loading-ring w-20 h-20 mx-auto mb-6"></div>
-                                <p className="text-2xl font-bold text-gray-800 mb-2">AI 正在创作中...</p>
-                                <p className="text-gray-500">使用 Pollinations.ai 免费生成</p>
-                                <p className="text-sm text-gray-400 mt-4 animate-pulse">首次生成可能需要 10-30 秒，请耐心等待...</p>
+                                <p className="text-2xl font-bold text-gray-800 mb-2">正在生成中...</p>
+                                <p className="text-gray-500">演示版：使用占位图 + CSS 滤镜</p>
                             </div>
                         )}
                         
@@ -321,15 +347,19 @@
                                 
                                 {/* 生成的图案 */}
                                 <div className="mb-6">
-                                    <p className="text-gray-600 mb-3 text-center">包装纸图案（可平铺）：</p>
+                                    <p className="text-gray-600 mb-3 text-center">包装纸图案（演示版）：</p>
                                     <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white">
                                         <img 
                                             src={generatedUrl} 
                                             alt="生成的包装纸" 
                                             className="w-full h-auto"
-                                            style={{imageRendering: 'crisp-edges'}}
+                                            style={{
+                                                imageRendering: 'crisp-edges',
+                                                filter: generatedFilter
+                                            }}
                                         />
                                     </div>
+                                    <p className="text-sm text-gray-400 mt-2 text-center">💡 演示版：真实 AI 生成需要后端支持</p>
                                 </div>
                                 
                                 {/* 预览效果 */}
@@ -338,7 +368,8 @@
                                     <div className="inline-block relative">
                                         <div className="w-40 h-40 rounded-2xl shadow-xl pattern-bg" style={{
                                             backgroundImage: `url(${generatedUrl})`,
-                                            backgroundSize: '80px 80px'
+                                            backgroundSize: '80px 80px',
+                                            filter: generatedFilter
                                         }}></div>
                                         <div className="absolute top-0 bottom-0 left-1/2 w-4 -translate-x-1/2 bg-gradient-to-b from-yellow-300 to-orange-400"></div>
                                         <div className="absolute left-0 right-0 top-1/2 h-4 -translate-y-1/2 bg-gradient-to-r from-yellow-300 to-orange-400"></div>
@@ -365,15 +396,15 @@
                                 </div>
                                 
                                 <p className="text-center text-sm text-gray-400 mt-4">
-                                    图片由 Pollinations.ai 免费生成
+                                    演示版：真实 AI 生成需要后端支持
                                 </p>
                             </div>
                         )}
                         
                         {/* 说明 */}
                         <div className="mt-10 text-center text-gray-500 text-sm">
-                            <p>🎨 使用 Pollinations.ai 免费 API 生成图片</p>
-                            <p className="mt-2">支持商业使用 · 无需注册 · 无限生成</p>
+                            <p>🎨 演示版本：使用占位图 + CSS 滤镜模拟效果</p>
+                            <p className="mt-2">真实 AI 生成需要接入后端 API（如 Replicate、Midjourney 等）</p>
                         </div>
                     </div>
                 </div>
