@@ -147,7 +147,14 @@
             
             const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true`;
             
-            return url;
+            // 预加载图片
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(url);
+                img.onerror = () => reject(new Error('图片加载失败'));
+                img.src = url;
+            });
         };
         
         function App() {
@@ -344,7 +351,7 @@
                                 <div className="loading-ring w-20 h-20 mx-auto mb-6"></div>
                                 <p className="text-2xl font-bold text-gray-800 mb-2">AI 正在创作中...</p>
                                 <p className="text-gray-500">使用 Pollinations.ai 免费生成</p>
-                                <p className="text-sm text-gray-400 mt-4">首次生成可能需要 10-30 秒</p>
+                                <p className="text-sm text-gray-400 mt-4 animate-pulse">首次生成可能需要 10-30 秒，请耐心等待...</p>
                             </div>
                         )}
                         
